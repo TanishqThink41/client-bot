@@ -10,7 +10,9 @@ export default function PhoneView() {
   // Selected image for modal
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const BASE_URL = import.meta.env.VITE_BASE_URL
+  // Make sure your .env (or wherever you store the URL) is correct, e.g.:
+  // VITE_BASE_URL = "https://server-bot-8tgl.onrender.com/"
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     // Connect to SSE for receiving images from laptop
@@ -19,13 +21,13 @@ export default function PhoneView() {
     });
 
     eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+      const data = JSON.parse(event.data || "{}");
       if (data.type === "image") {
         // Store only the last 5 images
         setIncomingImages((prev) => {
           const updated = [...prev, data.data];
           if (updated.length > 5) {
-            updated.shift(); // remove oldest
+            updated.shift(); // remove the oldest
           }
           return updated;
         });
@@ -39,8 +41,9 @@ export default function PhoneView() {
     return () => {
       eventSource.close();
     };
-  }, []);
+  }, [BASE_URL]);
 
+  // POST text to the server as JSON in the request body
   const handleSendText = async () => {
     const trimmed = text.trim();
     if (!trimmed) return;
@@ -56,17 +59,18 @@ export default function PhoneView() {
         setSentTexts((prev) => {
           const updated = [...prev, trimmed];
           if (updated.length > 5) {
-            updated.shift(); // remove oldest
+            updated.shift(); // remove the oldest
           }
           return updated;
         });
         setText("");
       }
     } catch (error) {
-      console.error("Failed to send text", error);
+      console.error("Failed to send text:", error);
     }
   };
 
+  // Logout route (via POST), then redirect to home if desired
   const handleLogout = async () => {
     try {
       await fetch(`${BASE_URL}logout`, {
@@ -75,7 +79,7 @@ export default function PhoneView() {
       });
       window.location.href = "/";
     } catch (error) {
-      console.error("Logout error", error);
+      console.error("Logout error:", error);
     }
   };
 
