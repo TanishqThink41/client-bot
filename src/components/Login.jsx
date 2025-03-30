@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [deviceType, setDeviceType] = useState("laptop");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_BASE_URL
 
   const handleLogin = async (e) => {
@@ -20,9 +21,9 @@ export default function Login() {
       const data = await res.json();
       if (data.success) {
         if (data.deviceType === "laptop") {
-          window.location.href = "/laptop";
+          navigate("/laptop");
         } else {
-          window.location.href = "/phone";
+          navigate("/phone");
         }
       } else {
         setMessage(data.message);
