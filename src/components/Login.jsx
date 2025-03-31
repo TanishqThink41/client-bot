@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Spinner from "./Spinner.jsx";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const BASE_URL = import.meta.env.VITE_BASE_URL
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage("");
     try {
       const res = await fetch(`${BASE_URL}login`, {
         method: "POST",
@@ -26,11 +30,13 @@ export default function Login() {
     } catch (error) {
       console.error(error);
       setMessage("Login error");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-black text-green-400">
+    <div className="flex items-center justify-center min-h-screen px-4 bg-black text-green-400">
       <div className="w-full max-w-md p-6 bg-gray-900 border border-green-500 rounded-lg shadow-lg">
         <h2 className="text-2xl font-semibold text-green-300 mb-4 text-center">Login</h2>
         <form onSubmit={handleLogin} className="space-y-4">
@@ -53,9 +59,10 @@ export default function Login() {
           </div>
           <button
             type="submit"
-            className="w-full bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm shadow-md transition"
+            className="w-full cursor-pointer bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm shadow-md transition flex justify-center items-center disabled:opacity-50"
+            disabled={loading}
           >
-            Login
+            {loading ? <Spinner /> : "Login"}
           </button>
         </form>
         {message && <p className="mt-4 text-sm text-red-400 text-center">{message}</p>}
