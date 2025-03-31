@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [deviceType, setDeviceType] = useState("laptop");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_BASE_URL
@@ -20,11 +19,7 @@ export default function Login() {
       });
       const data = await res.json();
       if (data.success) {
-        if (data.deviceType === "laptop") {
-          navigate("/laptop");
-        } else {
-          navigate("/phone");
-        }
+        navigate("/phone");
       } else {
         setMessage(data.message);
       }
@@ -35,42 +30,36 @@ export default function Login() {
   };
 
   return (
-    <div style={{ margin: 20 }}>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Username: </label>
-          <input 
-            value={username}
-            onChange={(e) => setUsername(e.target.value)} 
-          />
-        </div>
-        <div style={{ marginTop: 10 }}>
-          <label>Password: </label>
-          <input 
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)} 
-          />
-        </div>
-        <div style={{ marginTop: 10 }}>
-          <label>Device Type: </label>
-          <select
-            value={deviceType}
-            onChange={(e) => setDeviceType(e.target.value)}
+    <div className="flex items-center justify-center h-screen bg-black text-green-400">
+      <div className="w-full max-w-md p-6 bg-gray-900 border border-green-500 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-semibold text-green-300 mb-4 text-center">Login</h2>
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="block text-sm mb-1">Username:</label>
+            <input
+              className="w-full px-3 py-2 bg-gray-800 border border-green-500 rounded-lg text-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm mb-1">Password:</label>
+            <input
+              type="password"
+              className="w-full px-3 py-2 bg-gray-800 border border-green-500 rounded-lg text-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm shadow-md transition"
           >
-            <option value="laptop">Laptop</option>
-            <option value="phone">Phone</option>
-          </select>
-        </div>
-        <button style={{ marginTop: 10 }} type="submit">
-          Login
-        </button>
-      </form>
-      <p style={{ marginTop: 10 }}>
-        Don’t have an account? <Link to="/register">Register here</Link>
-      </p>
-      {message && <p>{message}</p>}
+            Login
+          </button>
+        </form>
+        {message && <p className="mt-4 text-sm text-red-400 text-center">{message}</p>}
+      </div>
     </div>
   );
 }
